@@ -74,8 +74,11 @@
   </div>
 
   <script>
-    let assinaturas = JSON.parse(localStorage.getItem('assinaturas')) || [];
+    let assinaturas = [];
 
+if (localStorage.getItem('assinaturas')) {
+  assinaturas = JSON.parse(localStorage.getItem('assinaturas'));
+}
     function atualizarLista() {
       const lista = document.getElementById('lista');
       const contador = document.getElementById('contador');
