@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,78 +61,51 @@
 <body>
   <div class="container">
     <h1>Abaixo-Assinado</h1>
-    <p>Explique aqui o motivo do abaixo-assinado.</p>
+    <p>Explique aqui o motivo do abaixo-assinado.</p><input type="text" id="nome" placeholder="Seu nome" required>
+<textarea id="comentario" placeholder="Comentário (opcional)"></textarea>
+<button onclick="assinar()">Assinar</button>
 
-    <input type="text" id="nome" placeholder="Seu nome" required>
-    <textarea id="comentario" placeholder="Comentário (opcional)"></textarea>
-    <button onclick="assinar()">Assinar</button>
-    <button onclick="limpar()">Limpar assinaturas</button>
+<div class="contador" id="contador">0 assinaturas</div>
 
-    <div class="contador" id="contador">0 assinaturas</div>
-    <div class="assinaturas" id="lista"></div>
-  </div>
+<div class="assinaturas" id="lista"></div>
 
-  <script type="module">
-    console.log("FUNCIONANDO");
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  </div>  <script>
+    let assinaturas = JSON.parse(localStorage.getItem('assinaturas')) || [];
 
-  const firebaseConfig = {
-    apiKey: "COLE_SEU_AQUI",
-    authDomain: "COLE_SEU_AQUI",
-    projectId: "COLE_SEU_AQUI",
-    storageBucket: "COLE_SEU_AQUI",
-    messagingSenderId: "COLE_SEU_AQUI",
-    appId: "COLE_SEU_AQUI"
-  };
+    function atualizarLista() {
+      const lista = document.getElementById('lista');
+      const contador = document.getElementById('contador');
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+      lista.innerHTML = '';
 
-  const lista = document.getElementById('lista');
-  const contador = document.getElementById('contador');
+      assinaturas.forEach(a => {
+        const div = document.createElement('div');
+        div.classList.add('assinatura');
+        div.innerHTML = `<strong>${a.nome}</strong><br>${a.comentario}`;
+        lista.appendChild(div);
+      });
 
-  async function carregar() {
-    lista.innerHTML = '';
-    const querySnapshot = await getDocs(collection(db, "assinaturas"));
-
-    let total = 0;
-
-    querySnapshot.forEach((doc) => {
-      const a = doc.data();
-
-      const div = document.createElement('div');
-      div.classList.add('assinatura');
-      div.innerHTML = <strong>${a.nome}</strong><br>${a.comentario || ''};
-
-      lista.appendChild(div);
-      total++;
-    });
-
-    contador.innerText = total + ' assinaturas';
-  }
-
-  window.assinar = async function () {
-    const nome = document.getElementById('nome').value;
-    const comentario = document.getElementById('comentario').value;
-
-    if (nome.trim() === '') {
-      alert('Digite seu nome');
-      return;
+      contador.innerText = assinaturas.length + ' assinaturas';
     }
 
-    await addDoc(collection(db, "assinaturas"), {
-      nome,
-      comentario
-    });
+    function assinar() {
+      const nome = document.getElementById('nome').value;
+      const comentario = document.getElementById('comentario').value;
 
-    document.getElementById('nome').value = '';
-    document.getElementById('comentario').value = '';
+      if (nome.trim() === '') {
+        alert('Por favor, insira seu nome.');
+        return;
+      }
 
-    carregar();
-  };
+      assinaturas.push({ nome, comentario });
+      localStorage.setItem('assinaturas', JSON.stringify(assinaturas));
 
-  carregar();
-</script>
-</body>
+      document.getElementById('nome').value = '';
+      document.getElementById('comentario').value = '';
+
+      atualizarLista();
+    }
+
+    atualizarLista();
+  </script></body>
 </html>
