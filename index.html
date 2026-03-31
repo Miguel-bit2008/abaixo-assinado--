@@ -73,53 +73,65 @@
     <div class="assinaturas" id="lista"></div>
   </div>
 
-  <script>
-    let assinaturas = [];
+  <script type="module">
+  // IMPORTA FIREBASE
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-if (localStorage.getItem('assinaturas')) {
-  assinaturas = JSON.parse(localStorage.getItem('assinaturas'));
-}
-    function atualizarLista() {
-      const lista = document.getElementById('lista');
-      const contador = document.getElementById('contador');
+  // COLE AQUI SEU firebaseConfig
+  const firebaseConfig = {
+    apiKey: "COLE_AQUI",
+    authDomain: "COLE_AQUI",
+    projectId: "COLE_AQUI",
+  };
 
-      lista.innerHTML = '';
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-      assinaturas.forEach(a => {
-        const div = document.createElement('div');
-        div.classList.add('assinatura');
-        div.innerHTML = `<strong>${a.nome}</strong><br>${a.comentario || ''}`;
-        lista.appendChild(div);
-      });
+  const lista = document.getElementById('lista');
+  const contador = document.getElementById('contador');
 
-      contador.innerText = assinaturas.length + ' assinaturas';
+  async function carregar() {
+    lista.innerHTML = '';
+    const querySnapshot = await getDocs(collection(db, "assinaturas"));
+
+    let total = 0;
+
+    querySnapshot.forEach((doc) => {
+      const a = doc.data();
+
+      const div = document.createElement('div');
+      div.classList.add('assinatura');
+      div.innerHTML = <strong>${a.nome}</strong><br>${a.comentario || ''};
+
+      lista.appendChild(div);
+      total++;
+    });
+
+    contador.innerText = total + ' assinaturas';
+  }
+
+  window.assinar = async function () {
+    const nome = document.getElementById('nome').value;
+    const comentario = document.getElementById('comentario').value;
+
+    if (nome.trim() === '') {
+      alert('Digite seu nome');
+      return;
     }
 
-    function assinar() {
-      const nome = document.getElementById('nome').value;
-      const comentario = document.getElementById('comentario').value;
+    await addDoc(collection(db, "assinaturas"), {
+      nome,
+      comentario
+    });
 
-      if (nome.trim() === '') {
-        alert('Por favor, insira seu nome.');
-        return;
-      }
+    document.getElementById('nome').value = '';
+    document.getElementById('comentario').value = '';
 
-      assinaturas.push({ nome, comentario });
-      localStorage.setItem('assinaturas', JSON.stringify(assinaturas));
+    carregar();
+  };
 
-      document.getElementById('nome').value = '';
-      document.getElementById('comentario').value = '';
-
-      atualizarLista();
-    }
-
-    function limpar() {
-      localStorage.removeItem('assinaturas');
-      assinaturas = [];
-      atualizarLista();
-    }
-
-    atualizarLista();
-  </script>
+  carregar();
+</script>
 </body>
 </html>
