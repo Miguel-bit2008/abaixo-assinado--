@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abaixo-Assinado</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: 40px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    p {
+      text-align: center;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .assinaturas {
+      margin-top: 20px;
+    }
+    .assinatura {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .contador {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Abaixo-Assinado</h1>
+    <p>Explique aqui o motivo do abaixo-assinado.</p>
+
+    <input type="text" id="nome" placeholder="Seu nome" required>
+    <textarea id="comentario" placeholder="Comentário (opcional)"></textarea>
+    <button onclick="assinar()">Assinar</button>
+    <button onclick="limpar()">Limpar assinaturas</button>
+
+    <div class="contador" id="contador">0 assinaturas</div>
+    <div class="assinaturas" id="lista"></div>
+  </div>
+
+  <script>
+    let assinaturas = JSON.parse(localStorage.getItem('assinaturas')) || [];
+
+    function atualizarLista() {
+      const lista = document.getElementById('lista');
+      const contador = document.getElementById('contador');
+
+      lista.innerHTML = '';
+
+      assinaturas.forEach(a => {
+        const div = document.createElement('div');
+        div.classList.add('assinatura');
+        div.innerHTML = `<strong>${a.nome}</strong><br>${a.comentario || ''}`;
+        lista.appendChild(div);
+      });
+
+      contador.innerText = assinaturas.length + ' assinaturas';
+    }
+
+    function assinar() {
+      const nome = document.getElementById('nome').value;
+      const comentario = document.getElementById('comentario').value;
+
+      if (nome.trim() === '') {
+        alert('Por favor, insira seu nome.');
+        return;
+      }
+
+      assinaturas.push({ nome, comentario });
+      localStorage.setItem('assinaturas', JSON.stringify(assinaturas));
+
+      document.getElementById('nome').value = '';
+      document.getElementById('comentario').value = '';
+
+      atualizarLista();
+    }
+
+    function limpar() {
+      localStorage.removeItem('assinaturas');
+      assinaturas = [];
+      atualizarLista();
+    }
+
+    atualizarLista();
+  </script>
+</body>
+</html>
