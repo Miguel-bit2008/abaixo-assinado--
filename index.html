@@ -74,15 +74,16 @@
   </div>
 
   <script type="module">
-  // IMPORTA FIREBASE
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // COLE AQUI SEU firebaseConfig
   const firebaseConfig = {
-    apiKey: "COLE_AQUI",
-    authDomain: "COLE_AQUI",
-    projectId: "COLE_AQUI",
+    apiKey: "COLE_SEU_AQUI",
+    authDomain: "COLE_SEU_AQUI",
+    projectId: "COLE_SEU_AQUI",
+    storageBucket: "COLE_SEU_AQUI",
+    messagingSenderId: "COLE_SEU_AQUI",
+    appId: "COLE_SEU_AQUI"
   };
 
   const app = initializeApp(firebaseConfig);
